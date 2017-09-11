@@ -1,3 +1,11 @@
+#!/usr/bin/env python
+"""
+This simple example is used for the line-by-line tutorial
+that comes with pygame. It is based on a 'popular' web banner.
+Note there are comments here, but for the full explanation,
+follow along in the tutorial.
+"""
+
 
 #Import Modules
 import os, pygame
@@ -155,7 +163,19 @@ def main():
         clock.tick(60)
 
         #Handle Input Events
-
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                going = False
+            elif event.type == KEYDOWN and event.key == K_ESCAPE:
+                going = False
+            elif event.type == MOUSEBUTTONDOWN:
+                if fist.punch(chimp):
+                    punch_sound.play() #punch
+                    chimp.punched()
+                else:
+                    whiff_sound.play() #miss
+            elif event.type == MOUSEBUTTONUP:
+                fist.unpunch()
 
         allsprites.update()
 

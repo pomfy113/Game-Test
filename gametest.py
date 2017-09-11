@@ -18,6 +18,7 @@ except ImportError, err:
 
 def load_png(name):
     # Load image and return image object
+    # Got from the pygames tutorial
     fullname = os.path.join('data', name)
     try:
         image = pygame.image.load(fullname)
@@ -30,16 +31,31 @@ def load_png(name):
         raise SystemExit, message
     return image, image.get_rect()
 
+# Recheck this; deals with tile-based things
+# Got this from qq after searching how to deal with tiles
+def load_tile_table(filename, width, height):
+    fullname = os.path.join('data', filename)
+    image = pygame.image.load(fullname).convert()
+    image_width, image_height = image.get_size()
+    tile_table = []
+    for tile_x in range(0, image_width/width):
+        line = []
+        tile_table.append(line)
+        for tile_y in range(0, image_height/height):
+            rect = (tile_x*width, tile_y*height, width, height)
+            line.append(image.subsurface(rect))
+    return tile_table
+
 class Unit(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.image, self.rect = load_png('bunny.png')
         screen = pygame.display.get_surface()
         self.area = screen.get_rect()
-        self.rect.topleft = 10, 10
-        self.move = 1
+        self.rect.topleft = 100, 100
+        self.move = 20
     def update(self):
-        self.move = 0
+        self.move = 20
 
 
 def main():
@@ -48,8 +64,8 @@ def main():
        a loop until the function returns."""
 #Initialize Everything
     pygame.init()
-    screen = pygame.display.set_mode((468, 60))
-    pygame.display.set_caption('Monkey Fever')
+    screen = pygame.display.set_mode((800, 600))
+    pygame.display.set_caption('Test junk')
     pygame.mouse.set_visible(0)
 
 #Create The Backgound
@@ -60,7 +76,7 @@ def main():
 #Put Text On The Background, Centered
     if pygame.font:
         font = pygame.font.Font(None, 36)
-        text = font.render("Pummel The Chimp, And Win $$$", 1, (10, 10, 10))
+        text = font.render("Text Test 1", 1, (10, 10, 10))
         textpos = text.get_rect(centerx=background.get_width()/2)
         background.blit(text, textpos)
 
@@ -68,16 +84,25 @@ def main():
     screen.blit(background, (0, 0))
     pygame.display.flip()
 
-#Prepare Game Objects
+# Prepare Game Objects
     clock = pygame.time.Clock()
 
     unit = Unit()
     allsprites = pygame.sprite.RenderPlain(unit)
 
+# Tileset
+    table = load_tile_table("tileset1.png", 24, 16)
+    for x, row in enumerate(table):
+        for y, tile in enumerate(row):
+            screen.blit(tile, (x*32, y*24))
+    pygame.display.flip()
+
     going = True
     while going:
         clock.tick(60)
-
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                return
         #Draw Everything
         allsprites.update()
 
@@ -90,5 +115,14 @@ def main():
 
 
 
-if __name__ == '__main__':
-    main()
+if __name__=='__main__':
+    pygame.init()
+    screen = pygame.display.set_mode((128, 98))
+    screen.fill((255, 255, 255))
+    table = load_tile_table("ground.png", 24, 16)
+    for x, row in enumerate(table):
+        for y, tile in enumerate(row):
+            screen.blit(tile, (x*32, y*24))
+    pygame.display.flip()
+    while pygame.event.wait().type != pygame.locals.QUIT:
+        pass

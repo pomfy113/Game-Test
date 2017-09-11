@@ -148,7 +148,7 @@ def main():
     player2 = Bat("right")
 
     # Initialise ball
-    speed = 50
+    speed = 30
     rand = ((0.1 * (random.randint(5,8))))
     ball = Ball((0,0),(0.47,speed))
 
